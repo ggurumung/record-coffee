@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>커피사업본부 회의록</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: #f6f4ef;
+      color: #2c2c2c;
+    }
+
+    .hidden { display: none !important; }
+
+    .screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 1100px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+      padding: 24px;
+    }
+
+    .login-box {
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 0 0 10px;
+      color: #3c2f2f;
+    }
+
+    .subtitle {
+      margin: 0 0 22px;
+      color: #6b6b6b;
+      line-height: 1.5;
+    }
+
+    input, textarea, select, button {
+      font: inherit;
+    }
+
+    .input, .textarea, .select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #d9d4cb;
+      background: #fff;
+      outline: none;
+    }
+
+    .textarea {
+      min-height: 130px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .input:focus, .textarea:focus, .select:focus {
+      border-color: #8b6f47;
+      box-shadow: 0 0 0 3px rgba(139,111,71,0.12);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: #6f4e37;
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #efe8dc;
+      color: #4b3a2f;
+    }
+
+    .btn-danger {
+      background: #c94f4f;
+      color: #fff;
+    }
+
+    .btn-success {
+      background: #4f8a5b;
+      color: #fff;
+    }
+
+    .btn-gray {
+      background: #ddd;
+      color: #333;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .toolbar-left, .toolbar-right {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 0 0 14px;
+      color: #3c2f2f;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #5b4b3f;
+    }
+
+    .panel {
+      background: #faf8f4;
+      border: 1px solid #ece5d8;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .posts {
+      display: grid;
+      gap: 14px;
+    }
+
+    .post {
+      border: 1px solid #e8e1d6;
+      border-radius: 16px;
+      padding: 18px;
+      background: #fff;
+    }
+
+    .post-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .post-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 0 0 6px;
+      color: #3b2c24;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: #7a7a7a;
+      line-height: 1.5;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eee5d7;
+      color: #5a4738;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .post-content {
+      line-height: 1.7;
+      white-space: pre-wrap;
+      margin-top: 8px;
+    }
+
+    .file-preview {
+      margin-top: 14px;
+    }
+
+    audio, img, iframe {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+
+    iframe {
+      height: 420px;
+      border: 1px solid #ddd;
+      background: #fff;
+    }
+
+    .post-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px 16px;
+      color: #777;
+      border: 1px dashed #d7cfc0;
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .record-status {
+      font-size: 14px;
+      font-weight: 700;
+      color: #6f4e37;
+      margin-top: 8px;
+    }
+
+    .search-box {
+      min-width: 220px;
+    }
+
+    .small-note {
+      font-size: 13px;
+      color: #7a7a7a;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .top-title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .top-title h1 {
+      margin: 0;
+      font-size: 30px;
+      color: #3c2f2f;
+    }
+
+    .edit-mode {
+      border: 2px solid #caa66b;
+      background: #fffdf8;
+    }
+
+    @media (max-width: 800px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .top-title h1 {
+        font-size: 24px;
+      }
+
+      .title {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 로그인 화면 -->
+  <section id="loginScreen" class="screen">
+    <div class="card login-box">
+      <h1 class="title">커피사업본부 회의록</h1>
+      <p class="subtitle">
+        숫자 비밀번호를 입력하면 회의록 게시판에 입장할 수 있습니다.
+      </p>
+
+      <input
+        id="passwordInput"
+        class="input"
+        type="password"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        placeholder="숫자 비밀번호 입력"
+      />
+      <div style="height: 12px;"></div>
+      <button class="btn btn-primary" id="loginBtn">입장하기</button>
+      <p class="small-note">
+        ※ 이 예시는 HTML 단독 버전이라 비밀번호가 코드 안에 들어있습니다.  
+        실제 운영용 보안은 서버 방식이 필요합니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- 메인 화면 -->
+  <section id="appScreen" class="hidden">
+    <div class="screen" style="align-items: flex-start;">
+      <div class="card">
+        <div class="top-title">
+          <h1>커피사업본부 회의록</h1>
+          <div class="toolbar-right">
+            <button class="btn btn-secondary" id="logoutBtn">로그아웃</button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <input id="searchInput" class="input search-box" type="text" placeholder="제목, 작성자, 내용 검색" />
+            <select id="filterType" class="select">
+              <option value="all">전체</option>
+              <option value="record">녹음기록</option>
+              <option value="summary">요약본</option>
+            </select>
+          </div>
+          <div class="toolbar-right">
+            <button class="btn btn-primary" id="newPostBtn">새 글 작성</button>
+          </div>
+        </div>
+
+        <!-- 작성/수정 폼 -->
+        <div id="editorPanel" class="panel hidden">
+          <h2 class="section-title" id="editorTitle">새 글 작성</h2>
+
+          <div class="form-grid">
+            <div>
+              <label class="label" for="postType">구분</label>
+              <select id="postType" class="select">
+                <option value="record">녹음기록</option>
+                <option value="summary">요약본(텍스트)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="label" for="authorInput">작성자</label>
+              <input id="authorInput" class="input" type="text" placeholder="이름 입력" />
+            </div>
+
+            <div class="full">
+              <label class="label" for="titleInput">제목</label>
+              <input id="titleInput" class="input" type="text" placeholder="예: 4월 1일 주간 회의" />
+            </div>
+
+            <div class="full">
+              <label class="label" for="contentInput">내용</label>
+              <textarea id="contentInput" class="textarea" placeholder="회의 내용, 요약본, 메모 등을 입력하세요."></textarea>
+            </div>
+
+            <div class="full">
+              <label class="label">파일 업로드</label>
+              <input id="fileInput" class="input" type="file" accept="audio/*,image/*,.pdf,application/pdf" />
+              <div class="small-note">
+                오디오 / 이미지 / PDF 업로드 가능
+              </div>
+            </div>
+
+            <div class="full">
+              <label class="label">브라우저 녹음 기능</label>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button type="button" class="btn btn-success" id="startRecordBtn">녹음 시작</button>
+                <button type="button" class="btn btn-danger" id="stopRecordBtn" disabled>녹음 종료</button>
+                <button type="button" class="btn btn-gray" id="clearRecordedBtn">녹음 삭제</button>
+              </div>
+              <div id="recordStatus" class="record-status">대기 중</div>
+              <audio id="recordedPreview" controls class="hidden"></audio>
+              <div class="small-note">
+                일부 아이폰/브라우저에서는 녹음 제한이 있을 수 있습니다. 그 경우 녹음 앱으로 만든 파일을 업로드하세요.
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:18px;">
+            <button class="btn btn-primary" id="saveBtn">저장하기</button>
+            <button class="btn btn-secondary" id="cancelBtn">취소</button>
+          </div>
+        </div>
+
+        <!-- 게시글 목록 -->
+        <div>
+          <h2 class="section-title">게시판</h2>
+          <div id="postsContainer" class="posts"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // =========================
+    // 설정
+    // =========================
+    const ACCESS_PASSWORD = "1234"; // 원하는 숫자 비밀번호로 바꾸세요
+    const STORAGE_KEY = "coffee_meeting_board_posts";
+    const AUTH_KEY = "coffee_meeting_board_auth";
+
+    // =========================
+    // 요소
+    // =========================
+    const loginScreen = document.getElementById("loginScreen");
+    const appScreen = document.getElementById("appScreen");
+    const passwordInput = document.getElementById("passwordInput");
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    const newPostBtn = document.getElementById("newPostBtn");
+    const editorPanel = document.getElementById("editorPanel");
+    const editorTitle = document.getElementById("editorTitle");
+    const postType = document.getElementById("postType");
+    const authorInput = document.getElementById("authorInput");
+    const titleInput = document.getElementById("titleInput");
+    const contentInput = document.getElementById("contentInput");
+    const fileInput = document.getElementById("fileInput");
+    const saveBtn = document.getElementById("saveBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const postsContainer = document.getElementById("postsContainer");
+    const searchInput = document.getElementById("searchInput");
+    const filterType = document.getElementById("filterType");
+
+    const startRecordBtn = document.getElementById("startRecordBtn");
+    const stopRecordBtn = document.getElementById("stopRecordBtn");
+    const clearRecordedBtn = document.getElementById("clearRecordedBtn");
+    const recordStatus = document.getElementById("recordStatus");
+    const recordedPreview = document.getElementById("recordedPreview");
+
+    // =========================
+    // 상태
+    // =========================
+    let posts = loadPosts();
+    let editingId = null;
+
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let recordedFileData = null; // {name, type, dataUrl}
+
+    // =========================
+    // 로그인
+    // =========================
+    function checkLoginState() {
+      const authed = localStorage.getItem(AUTH_KEY);
+      if (authed === "true") {
+        showApp();
+      } else {
+        showLogin();
+      }
+    }
+
+    function showLogin() {
+      loginScreen.classList.remove("hidden");
+      appScreen.classList.add("hidden");
+    }
+
+    function showApp() {
+      loginScreen.classList.add("hidden");
+      appScreen.classList.remove("hidden");
+      renderPosts();
+    }
+
+    loginBtn.addEventListener("click", () => {
+      const value = passwordInput.value.trim();
+      if (value === ACCESS_PASSWORD) {
+        localStorage.setItem(AUTH_KEY, "true");
+        showApp();
+      } else {
+        alert("비밀번호가 올바르지 않습니다.");
+      }
+    });
+
+    passwordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loginBtn.click();
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem(AUTH_KEY);
+      showLogin();
+    });
+
+    // =========================
+    // 로컬 스토리지
+    // =========================
+    function loadPosts() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (error) {
+        console.error("불러오기 실패:", error);
+        return [];
+      }
+    }
+
+    function savePosts() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+    }
+
+    // =========================
+    // 에디터 열기/닫기
+    // =========================
+    newPostBtn.addEventListener("click", () => {
+      openEditor();
+    });
+
+    cancelBtn.addEventListener("click", () => {
+      closeEditor();
+    });
+
+    function openEditor(post = null) {
+      editorPanel.classList.remove("hidden");
+      editorPanel.classList.remove("edit-mode");
+      fileInput.value = "";
+
+      if (post) {
+        editingId = post.id;
+        editorTitle.textContent = "글 수정";
+        editorPanel.classList.add("edit-mode");
+        postType.value = post.type;
+        authorInput.value = post.author || "";
+        titleInput.value = post.title || "";
+        contentInput.value = post.content || "";
+
+        if (post.file) {
+          recordedFileData = post.file;
+          updateRecordedPreview(post.file);
+        } else {
+          clearRecordedData();
+        }
+      } else {
+        editingId = null;
+        editorTitle.textContent = "새 글 작성";
+        postType.value = "record";
+        authorInput.value = "";
+        titleInput.value = "";
+        contentInput.value = "";
+        clearRecordedData();
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function closeEditor() {
+      editorPanel.classList.add("hidden");
+      editingId = null;
+      postType.value = "record";
+      authorInput.value = "";
+      titleInput.value = "";
+      contentInput.value = "";
+      fileInput.value = "";
+      clearRecordedData();
+    }
+
+    // =========================
+    // 파일 업로드
+    // =========================
+    fileInput.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const dataUrl = await fileToDataURL(file);
+        recordedFileData = {
+          name: file.name,
+          type: file.type || getMimeTypeByName(file.name),
+          dataUrl
+        };
+        updateRecordedPreview(recordedFileData);
+      } catch (error) {
+        console.error(error);
+        alert("파일을 불러오는 중 오류가 발생했습니다.");
+      }
+    });
+
+    function fileToDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function getMimeTypeByName(name) {
+      const lower = name.toLowerCase();
+      if (lower.endsWith(".pdf")) return "application/pdf";
+      if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+      if (lower.endsWith(".png")) return "image/png";
+      if (lower.endsWith(".webp")) return "image/webp";
+      if (lower.endsWith(".mp3")) return "audio/mpeg";
+      if (lower.endsWith(".wav")) return "audio/wav";
+      if (lower.endsWith(".m4a")) return "audio/mp4";
+      return "application/octet-stream";
+    }
+
+    // =========================
+    // 녹음 기능
+    // =========================
+    startRecordBtn.addEventListener("click", async () => {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+        alert("이 브라우저는 녹음 기능을 지원하지 않습니다. 파일 업로드를 사용해주세요.");
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        recordedChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) recordedChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || "audio/webm" });
+          const ext = blob.type.includes("mp4") ? "m4a" : "webm";
+          const file = new File([blob], `recording_${Date.now()}.${ext}`, { type: blob.type });
+          const dataUrl = await fileToDataURL(file);
+
+          recordedFileData = {
+            name: file.name,
+            type: file.type,
+            dataUrl
+          };
+
+          updateRecordedPreview(recordedFileData);
+          recordStatus.textContent = "녹음이 저장되었습니다.";
+          stream.getTracks().forEach(track => track.stop());
+        };
+
+        mediaRecorder.start();
+        recordStatus.textContent = "녹음 중...";
+        startRecordBtn.disabled = true;
+        stopRecordBtn.disabled = false;
+      } catch (error) {
+        console.error(error);
+        alert("마이크 권한이 없거나 녹음을 시작할 수 없습니다.");
+      }
+    });
+
+    stopRecordBtn.addEventListener("click", () => {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+        startRecordBtn.disabled = false;
+        stopRecordBtn.disabled = true;
+      }
+    });
+
+    clearRecordedBtn.addEventListener("click", () => {
+      clearRecordedData();
+      fileInput.value = "";
+    });
+
+    function updateRecordedPreview(fileObj) {
+      if (!fileObj) {
+        recordedPreview.classList.add("hidden");
+        recordedPreview.src = "";
+        return;
+      }
+
+      if (fileObj.type && fileObj.type.startsWith("audio/")) {
+        recordedPreview.src = fileObj.dataUrl;
+        recordedPreview.classList.remove("hidden");
+      } else {
+        recordedPreview.classList.add("hidden");
+        recordedPreview.src = "";
+      }
+    }
+
+    function clearRecordedData() {
+      recordedFileData = null;
+      recordedChunks = [];
+      recordedPreview.classList.add("hidden");
+      recordedPreview.src = "";
+      recordStatus.textContent = "대기 중";
+      startRecordBtn.disabled = false;
+      stopRecordBtn.disabled = true;
+    }
+
+    // =========================
+    // 저장
+    // =========================
+    saveBtn.addEventListener("click", () => {
+      const type = postType.value;
+      const author = authorInput.value.trim();
+      const title = titleInput.value.trim();
+      const content = contentInput.value.trim();
+
+      if (!author) {
+        alert("작성자를 입력해주세요.");
+        return;
+      }
+
+      if (!title) {
+        alert("제목을 입력해주세요.");
+        return;
+      }
+
+      if (!content && !recordedFileData) {
+        alert("내용 또는 파일/녹음 중 하나 이상 필요합니다.");
+        return;
+      }
+
+      const now = new Date();
+      const postData = {
+        id: editingId || Date.now().toString(),
+        type,
+        author,
+        title,
+        content,
+        file: recordedFileData,
+        createdAt: editingId
+          ? (posts.find(p => p.id === editingId)?.createdAt || now.toISOString())
+          : now.toISOString(),
+        updatedAt: now.toISOString()
+      };
+
+      if (editingId) {
+        posts = posts.map(p => p.id === editingId ? postData : p);
+      } else {
+        posts.unshift(postData);
+      }
+
+      savePosts();
+      renderPosts();
+      closeEditor();
+    });
+
+    // =========================
+    // 목록 렌더링
+    // =========================
+    function renderPosts() {
+      const keyword = searchInput.value.trim().toLowerCase();
+      const typeFilter = filterType.value;
+
+      let filtered = [...posts];
+
+      if (typeFilter !== "all") {
+        filtered = filtered.filter(post => post.type === typeFilter);
+      }
+
+      if (keyword) {
+        filtered = filtered.filter(post => {
+          return (
+            (post.title || "").toLowerCase().includes(keyword) ||
+            (post.author || "").toLowerCase().includes(keyword) ||
+            (post.content || "").toLowerCase().includes(keyword)
+          );
+        });
+      }
+
+      if (filtered.length === 0) {
+        postsContainer.innerHTML = `
+          <div class="empty">
+            등록된 글이 없습니다.
+          </div>
+        `;
+        return;
+      }
+
+      postsContainer.innerHTML = filtered.map(post => {
+        const typeLabel = post.type === "record" ? "녹음기록" : "요약본";
+        const created = formatDate(post.createdAt);
+        const updated = formatDate(post.updatedAt);
+
+        return `
+          <article class="post">
+            <div class="post-head">
+              <div>
+                <div class="badge">${typeLabel}</div>
+                <h3 class="post-title">${escapeHtml(post.title)}</h3>
+                <div class="meta">
+                  작성자: ${escapeHtml(post.author)}<br />
+                  작성일: ${created}<br />
+                  수정일: ${updated}
+                </div>
+              </div>
+            </div>
+
+            ${post.content ? `<div class="post-content">${escapeHtml(post.content)}</div>` : ""}
+
+            ${renderFilePreview(post.file)}
+
+            <div class="post-actions">
+              <button class="btn btn-secondary" onclick="editPost('${post.id}')">수정</button>
+              <button class="btn btn-danger" onclick="deletePost('${post.id}')">삭제</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderFilePreview(file) {
+      if (!file || !file.dataUrl) return "";
+
+      const safeName = escapeHtml(file.name || "첨부파일");
+      const type = file.type || "";
+
+      if (type.startsWith("audio/")) {
+        return `
+          <div class="file-preview">
+            <div class="meta">첨부파일: ${safeName}</div>
+            <audio controls src="${file.dataUrl}"></audio>
+          </div>
+        `;
+      }
+
+      if (type.startsWith("image/")) {
+        return `
+          <div class="file-preview">
+            <div class="meta">첨부파일: ${safeName}</div>
+            <img src="${file.dataUrl}" alt="${safeName}" />
+          </div>
+        `;
+      }
+
+      if (type === "application/pdf") {
+        return `
+          <div class="file-preview">
+            <div class="meta">첨부파일: ${safeName}</div>
+            <iframe src="${file.dataUrl}"></iframe>
+            <div style="margin-top:8px;">
+              <a href="${file.dataUrl}" download="${safeName}" class="btn btn-secondary" style="display:inline-block; text-decoration:none;">PDF 다운로드</a>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="file-preview">
+          <div class="meta">첨부파일: ${safeName}</div>
+          <a href="${file.dataUrl}" download="${safeName}" class="btn btn-secondary" style="display:inline-block; text-decoration:none;">파일 다운로드</a>
+        </div>
+      `;
+    }
+
+    // =========================
+    // 수정 / 삭제
+    // =========================
+    window.editPost = function(id) {
+      const post = posts.find(p => p.id === id);
+      if (!post) return;
+      openEditor(post);
+    }
+
+    window.deletePost = function(id) {
+      const post = posts.find(p => p.id === id);
+      if (!post) return;
+
+      const ok = confirm(`"${post.title}" 글을 삭제하시겠습니까?`);
+      if (!ok) return;
+
+      posts = posts.filter(p => p.id !== id);
+      savePosts();
+      renderPosts();
+
+      if (editingId === id) {
+        closeEditor();
+      }
+    }
+
+    // =========================
+    // 검색/필터
+    // =========================
+    searchInput.addEventListener("input", renderPosts);
+    filterType.addEventListener("change", renderPosts);
+
+    // =========================
+    // 유틸
+    // =========================
+    function formatDate(iso) {
+      if (!iso) return "-";
+      const d = new Date(iso);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const hh = String(d.getHours()).padStart(2, "0");
+      const mi = String(d.getMinutes()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    // =========================
+    // 시작
+    // =========================
+    checkLoginState();
+  </script>
+</body>
+</html>

@@ -303,6 +303,103 @@ iframe {
   margin-top: 8px;
 }
 
+#recordTimer {
+  color: #c94f4f;
+  margin-left: 5px;
+}
+
+.admin-badge {
+  background: #333;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+[data-theme="dark"] .admin-badge {
+  background: #eee;
+  color: #333;
+}
+
+/* Comments Style */
+.comments-section {
+  margin-top: 20px;
+  border-top: 1px solid var(--border-post);
+  padding-top: 15px;
+}
+
+.comment-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.comment {
+  background: var(--bg-panel);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.comment-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.comment-author {
+  font-weight: 700;
+  color: var(--text-title);
+}
+
+.comment-date {
+  font-size: 11px;
+  color: var(--text-meta);
+}
+
+.comment-content {
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.comment-actions {
+  margin-top: 6px;
+  font-size: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.comment-actions span {
+  cursor: pointer;
+  color: var(--text-meta);
+  text-decoration: underline;
+}
+
+.comment-actions span:hover {
+  color: var(--primary);
+}
+
+.comment-form {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
 .search-box {
   min-width: 220px;
 }

@@ -1,10 +1,12 @@
 // =========================
 // 설정
 // =========================
-const ACCESS_PASSWORD = "1234"; // 원하는 숫자 비밀번호로 바꾸세요
+const ACCESS_PASSWORD = "1234"; 
+const ADMIN_PASSWORD = "admin"; // 관리자 비밀번호
 const STORAGE_KEY = "coffee_meeting_board_posts";
 const AUTH_KEY = "coffee_meeting_board_auth";
 const THEME_KEY = "coffee_meeting_board_theme";
+const ADMIN_KEY = "coffee_meeting_board_admin";
 
 // =========================
 // 요소
@@ -14,6 +16,7 @@ const appScreen = document.getElementById("appScreen");
 const passwordInput = document.getElementById("passwordInput");
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
+const adminBtn = document.getElementById("adminBtn");
 
 const newPostBtn = document.getElementById("newPostBtn");
 const editorPanel = document.getElementById("editorPanel");
@@ -33,6 +36,7 @@ const startRecordBtn = document.getElementById("startRecordBtn");
 const stopRecordBtn = document.getElementById("stopRecordBtn");
 const clearRecordedBtn = document.getElementById("clearRecordedBtn");
 const recordStatus = document.getElementById("recordStatus");
+const recordTimer = document.getElementById("recordTimer");
 const recordedPreview = document.getElementById("recordedPreview");
 
 const themeToggleBtns = document.querySelectorAll(".theme-toggle");
@@ -66,6 +70,48 @@ themeToggleBtns.forEach(btn => {
 });
 
 // =========================
+// 관리자 모드
+// =========================
+let isAdmin = localStorage.getItem(ADMIN_KEY) === "true";
+
+function updateAdminUI() {
+  if (isAdmin) {
+    adminBtn.textContent = "관리자 로그아웃";
+    adminBtn.classList.replace("btn-gray", "btn-danger");
+    if (!document.querySelector(".admin-badge-title")) {
+      const badge = document.createElement("span");
+      badge.className = "admin-badge admin-badge-title";
+      badge.textContent = "ADMIN MODE";
+      document.querySelector(".top-title h1").appendChild(badge);
+    }
+  } else {
+    adminBtn.textContent = "관리자 모드";
+    adminBtn.classList.replace("btn-danger", "btn-gray");
+    const badge = document.querySelector(".admin-badge-title");
+    if (badge) badge.remove();
+  }
+  renderPosts();
+}
+
+adminBtn.addEventListener("click", () => {
+  if (isAdmin) {
+    isAdmin = false;
+    localStorage.removeItem(ADMIN_KEY);
+    alert("관리자 모드가 해제되었습니다.");
+  } else {
+    const pw = prompt("관리자 비밀번호를 입력하세요.");
+    if (pw === ADMIN_PASSWORD) {
+      isAdmin = true;
+      localStorage.setItem(ADMIN_KEY, "true");
+      alert("관리자 모드로 전환되었습니다.");
+    } else if (pw !== null) {
+      alert("비밀번호가 틀렸습니다.");
+    }
+  }
+  updateAdminUI();
+});
+
+// =========================
 // 상태
 // =========================
 let posts = loadPosts();
@@ -73,7 +119,10 @@ let editingId = null;
 
 let mediaRecorder = null;
 let recordedChunks = [];
-let recordedFileData = null; // {name, type, dataUrl}
+let recordedFileData = null; 
+
+let recordStartTime = null;
+let recordInterval = null;
 
 // =========================
 // 로그인
@@ -95,6 +144,7 @@ function showLogin() {
 function showApp() {
   loginScreen.classList.add("hidden");
   appScreen.classList.remove("hidden");
+  updateAdminUI();
   renderPosts();
 }
 
@@ -114,6 +164,8 @@ passwordInput.addEventListener("keydown", (e) => {
 
 logoutBtn.addEventListener("click", () => {
   localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(ADMIN_KEY);
+  isAdmin = false;
   showLogin();
 });
 
@@ -250,6 +302,7 @@ startRecordBtn.addEventListener("click", async () => {
     };
 
     mediaRecorder.onstop = async () => {
+      stopTimer();
       const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || "audio/webm" });
       const ext = blob.type.includes("mp4") ? "m4a" : "webm";
       const file = new File([blob], `recording_${Date.now()}.${ext}`, { type: blob.type });
@@ -267,6 +320,7 @@ startRecordBtn.addEventListener("click", async () => {
     };
 
     mediaRecorder.start();
+    startTimer();
     recordStatus.textContent = "녹음 중...";
     startRecordBtn.disabled = true;
     stopRecordBtn.disabled = false;
@@ -275,6 +329,23 @@ startRecordBtn.addEventListener("click", async () => {
     alert("마이크 권한이 없거나 녹음을 시작할 수 없습니다.");
   }
 });
+
+function startTimer() {
+  recordStartTime = Date.now();
+  recordTimer.classList.remove("hidden");
+  recordTimer.textContent = "(00:00)";
+  recordInterval = setInterval(() => {
+    const seconds = Math.floor((Date.now() - recordStartTime) / 1000);
+    const m = String(Math.floor(seconds / 60)).padStart(2, "0");
+    const s = String(seconds % 60).padStart(2, "0");
+    recordTimer.textContent = `(${m}:${s})`;
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(recordInterval);
+  recordTimer.classList.add("hidden");
+}
 
 stopRecordBtn.addEventListener("click", () => {
   if (mediaRecorder && mediaRecorder.state !== "inactive") {
@@ -347,6 +418,7 @@ saveBtn.addEventListener("click", () => {
     title,
     content,
     file: recordedFileData,
+    comments: editingId ? (posts.find(p => p.id === editingId)?.comments || []) : [],
     createdAt: editingId
       ? (posts.find(p => p.id === editingId)?.createdAt || now.toISOString())
       : now.toISOString(),
@@ -420,8 +492,34 @@ function renderPosts() {
         ${renderFilePreview(post.file)}
 
         <div class="post-actions">
-          <button class="btn btn-secondary" onclick="editPost('${post.id}')">수정</button>
-          <button class="btn btn-danger" onclick="deletePost('${post.id}')">삭제</button>
+          ${isAdmin ? `
+            <button class="btn btn-secondary" onclick="editPost('${post.id}')">수정</button>
+            <button class="btn btn-danger" onclick="deletePost('${post.id}')">삭제</button>
+          ` : ""}
+        </div>
+
+        <!-- 댓글 섹션 -->
+        <div class="comments-section">
+          <div class="comment-list">
+            ${(post.comments || []).map(comment => `
+              <div class="comment">
+                <div class="comment-head">
+                  <span class="comment-author">${escapeHtml(comment.author)}</span>
+                  <span class="comment-date">${formatDate(comment.createdAt)}</span>
+                </div>
+                <div class="comment-content">${escapeHtml(comment.content)}</div>
+                <div class="comment-actions">
+                  ${(isAdmin || localStorage.getItem(`comment_author_${comment.id}`) === "true") ? `
+                    <span onclick="deleteComment('${post.id}', '${comment.id}')">삭제</span>
+                  ` : ""}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+          <div class="comment-form">
+            <input type="text" class="comment-input" id="cmtInput_${post.id}" placeholder="댓글을 입력하세요..." onkeydown="if(event.key==='Enter') addComment('${post.id}')">
+            <button class="btn btn-primary btn-sm" onclick="addComment('${post.id}')">등록</button>
+          </div>
         </div>
       </article>
     `;
@@ -473,15 +571,68 @@ function renderFilePreview(file) {
 }
 
 // =========================
-// 수정 / 삭제
+// 댓글 기능
+// =========================
+window.addComment = function(postId) {
+  const input = document.getElementById(`cmtInput_${postId}`);
+  const content = input.value.trim();
+  if (!content) return;
+
+  const author = prompt("작성자 이름을 입력하세요.");
+  if (!author) return;
+
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+
+  if (!post.comments) post.comments = [];
+  
+  const commentId = Date.now().toString();
+  const newComment = {
+    id: commentId,
+    author,
+    content,
+    createdAt: new Date().toISOString()
+  };
+
+  post.comments.push(newComment);
+  // 본인이 작성한 댓글임을 로컬스토리지에 임시 저장 (삭제 권한용)
+  localStorage.setItem(`comment_author_${commentId}`, "true");
+
+  savePosts();
+  renderPosts();
+};
+
+window.deleteComment = function(postId, commentId) {
+  if (!confirm("댓글을 삭제하시겠습니까?")) return;
+
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+
+  post.comments = post.comments.filter(c => c.id !== commentId);
+  localStorage.removeItem(`comment_author_${commentId}`);
+
+  savePosts();
+  renderPosts();
+};
+
+// =========================
+// 수정 / 삭제 (관리자 전용)
 // =========================
 window.editPost = function(id) {
+  if (!isAdmin) {
+    alert("관리자만 수정할 수 있습니다.");
+    return;
+  }
   const post = posts.find(p => p.id === id);
   if (!post) return;
   openEditor(post);
 }
 
 window.deletePost = function(id) {
+  if (!isAdmin) {
+    alert("관리자만 삭제할 수 있습니다.");
+    return;
+  }
   const post = posts.find(p => p.id === id);
   if (!post) return;
 

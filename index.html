@@ -51,6 +51,7 @@
           <h1>커피사업본부 회의록</h1>
           <div class="toolbar-right">
             <button class="theme-toggle" title="테마 전환">🌙</button>
+            <button class="btn btn-gray" id="adminBtn">관리자 모드</button>
             <button class="btn btn-secondary" id="logoutBtn">로그아웃</button>
           </div>
         </div>
@@ -112,7 +113,7 @@
                 <button type="button" class="btn btn-danger" id="stopRecordBtn" disabled>녹음 종료</button>
                 <button type="button" class="btn btn-gray" id="clearRecordedBtn">녹음 삭제</button>
               </div>
-              <div id="recordStatus" class="record-status">대기 중</div>
+              <div id="recordStatus" class="record-status">대기 중 <span id="recordTimer" class="hidden">(00:00)</span></div>
               <audio id="recordedPreview" controls class="hidden"></audio>
               <div class="small-note">
                 일부 아이폰/브라우저에서는 녹음 제한이 있을 수 있습니다. 그 경우 녹음 앱으로 만든 파일을 업로드하세요.
@@ -136,5 +137,7 @@
   </section>
 
   <script src="main.js"></script>
+</body>
+</html>"></script>
 </body>
 </html>
